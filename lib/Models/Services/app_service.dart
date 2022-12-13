@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:hd_bank/Models/Apis/api_helper.dart';
 import 'package:hd_bank/Models/Apis/app_exception.dart';
 import 'package:hd_bank/Models/Services/Common/base_service.dart';
+import 'package:hd_bank/Models/base_response.dart';
+import 'package:hd_bank/constants.dart';
 import 'package:http/http.dart' as http;
 
 class AppService extends BaseService {
@@ -37,11 +39,36 @@ class AppService extends BaseService {
     }
     switch (response.statusCode) {
       case 200:
-        dynamic responseJson = jsonDecode(response.body);
-        if (kDebugMode) {
-          print(responseJson);
+        BaseResponse result = BaseResponse.fromJson(response.body);
+        switch (result.response.responseCode) {
+          case "00":
+            return jsonDecode(result.data);
+          case "01":
+            throw SeverException(Message.messageCode01);
+          case "02":
+            throw SeverException(Message.messageCode02);
+          case "03":
+            throw SeverException(Message.messageCode03);
+          case "04":
+            throw SeverException(Message.messageCode04);
+          case "05":
+            throw SeverException(Message.messageCode05);
+          case "06":
+            throw SeverException(Message.messageCode06);
+          case "07":
+            throw SeverException(Message.messageCode07);
+          case "08":
+            throw SeverException(Message.messageCode08);
+          case "09":
+            throw SeverException(Message.messageCode09);
+          case "10":
+            throw SeverException(Message.messageCode10);
+          case "11":
+            throw SeverException(Message.messageCode11);
+          case "99":
+            throw SeverException(Message.messageCode99);
         }
-        return responseJson;
+        break;
       case 400:
         throw BadRequestException(response.body.toString());
       case 401:

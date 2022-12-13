@@ -50,6 +50,8 @@ class _UserActionScreenState extends State<UserActionScreen>
     Size size = MediaQuery.of(context).size;
     return CommonPage(
         enableAppBar: true,
+        canBack: true,
+        backAction: () => Navigator.pop(context),
         content: SingleChildScrollView(
           child: Column(
             children: [

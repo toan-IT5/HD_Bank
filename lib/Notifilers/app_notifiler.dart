@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hd_bank/Models/Apis/api_response.dart';
 import 'package:hd_bank/Models/Services/Repositorys/app_responsitory.dart';
 import 'package:hd_bank/Models/user.dart';
+import 'package:hd_bank/Utils/shared_preferences_helper.dart';
 
 class AppNotifiler with ChangeNotifier {
   ApiResponse _apiResponse = ApiResponse.initial('Không có dữ liệu');
@@ -9,29 +10,44 @@ class AppNotifiler with ChangeNotifier {
   String _key = "";
   User? _user;
   bool _authorize = false;
-  int _page = 0;
+  int _page = 4;
+  String _accountNo = "";
+  bool _isAuthorized = false;
 
   String get key => _key;
   User? get user => _user;
   ApiResponse get response => _apiResponse;
   bool get authorize => _authorize;
   int get page => _page;
+  String get accountNo => _accountNo;
+  bool get isAuthorized => _isAuthorized;
 
   AppNotifiler() {
-    // ignore: avoid_print
-    getKey().then((value) => {
-          // print("Khỏi tạo API $_key")
-        });
-    // print("Khỏi tạo API $_key");
+    checkAuthor();
+  }
+
+  Future<void> checkAuthor() async {
+    getKey();
+    _user = await SharedPrefHelper.getUser();
+    if (_user != null) {
+      await login(_user!);
+    }
   }
 
   Future<void> getKey() async {
     _apiResponse = ApiResponse.loading('Đang lấy API KEY');
     notifyListeners();
     try {
-      _key = await AppReponsitory().getKey();
+      _key = await SharedPrefHelper.getKey();
+      if (_key.isEmpty) {
+        _key = await AppReponsitory().getKey();
+        SharedPref.save(SharedPrefPath.key, _key);
+      }
     } catch (e) {
       _apiResponse = ApiResponse.error(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
     notifyListeners();
   }
@@ -40,14 +56,21 @@ class AppNotifiler with ChangeNotifier {
     _apiResponse = ApiResponse.loading('Đang lấy API KEY');
     notifyListeners();
     try {
-      var isSuccess = await AppReponsitory().login(user, key);
-      if (isSuccess) {
+      String? accountNo = await AppReponsitory().login(user, key);
+      if (accountNo!.isNotEmpty) {
+        _isAuthorized = true;
         _user = user;
         _authorize = true;
+        _accountNo = accountNo;
+        _apiResponse = ApiResponse.completed(_accountNo);
+        SharedPrefHelper.saveUser(user);
       }
-      _apiResponse = ApiResponse.completed("Đăng nhập thành công");
+      _apiResponse = ApiResponse.completed("Đăng nhập không thành công.");
     } catch (e) {
       _apiResponse = ApiResponse.error(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
     notifyListeners();
   }
@@ -60,6 +83,9 @@ class AppNotifiler with ChangeNotifier {
       _apiResponse = ApiResponse.completed(userId);
     } catch (e) {
       _apiResponse = ApiResponse.error(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
     notifyListeners();
   }

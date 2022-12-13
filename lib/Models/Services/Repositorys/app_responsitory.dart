@@ -10,14 +10,14 @@ class AppReponsitory {
 
   Future<String> getKey() async {
     dynamic response = await _appService.getResponse(Enpoints.getKey);
-    final key = response['data']['key'] as String;
+    final key = response['key'] as String;
     return key;
   }
 
-  Future<bool> login(User user, String key) async {
-    await _appService.getResponse(Enpoints.login,
+  Future<String?> login(User user, String key) async {
+    var response = await _appService.getResponse(Enpoints.login,
         params: await BodyHelper.getLoginParam(user, key));
-    return true;
+    return response["accountNo"];
   }
 
   Future<String> register(User user, String key) async {

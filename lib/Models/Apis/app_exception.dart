@@ -28,3 +28,7 @@ class UnauthorisedException extends AppException {
 class InvalidInputException extends AppException {
   InvalidInputException([String? message]) : super(message, "Invalid Input: ");
 }
+
+class SeverException extends AppException {
+  SeverException([String? message]) : super(message, "Lỗi: ");
+}

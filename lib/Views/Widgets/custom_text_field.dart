@@ -2,24 +2,26 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hd_bank/Utils/base_style.dart';
 import 'package:hd_bank/Views/Widgets/masked_text_Input_formatter.dart.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField(
       {Key? key,
-      required this.hintTextString,
       required this.textEditController,
       required this.inputType,
       required this.enableBorder,
+      this.hintTextString,
       this.themeColor,
       this.cornerRadius,
       this.maxLength,
       this.prefixIcon,
+      this.lable,
       this.textColor,
       this.errorMessage})
       : super(key: key);
 
-  final String hintTextString;
+  final String? hintTextString;
   final TextEditingController textEditController;
   final EInputType inputType;
   final bool enableBorder;
@@ -29,6 +31,7 @@ class CustomTextField extends StatefulWidget {
   final Widget? prefixIcon;
   final Color? textColor;
   final String? errorMessage;
+  final String? lable;
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
@@ -45,30 +48,43 @@ class _CustomTextFieldState extends State<CustomTextField> {
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
       ),
-      child: TextFormField(
-        controller: widget.textEditController,
-        decoration: InputDecoration(
-          hintText: widget.hintTextString,
-          errorText: _isValidate ? null : validationMessage,
-          counterText: '',
-          border: getBorder(),
-          enabledBorder: widget.enableBorder ? getBorder() : InputBorder.none,
-          focusedBorder:
-              widget.enableBorder ? getFocusBorder() : InputBorder.none,
-          labelStyle: getTextStyle(),
-          prefixIcon: widget.prefixIcon ?? getPrefixIcon(),
-          suffixIcon: getSuffixIcon(),
-        ),
-        onChanged: checkValidation,
-        keyboardType: getInputType(),
-        obscureText: widget.inputType == EInputType.Password && !visibility,
-        maxLength: widget.inputType == EInputType.PaymentCard
-            ? 19
-            : widget.maxLength ?? getMaxLength(),
-        style: TextStyle(
-          color: widget.textColor ?? Colors.black,
-        ),
-        inputFormatters: [getFormatter()],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          widget.lable != null
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(widget.lable!,
+                      style: BaseTextStyle.body3(color: BaseColor.black)),
+                )
+              : Container(),
+          TextFormField(
+            controller: widget.textEditController,
+            decoration: InputDecoration(
+              hintText: widget.hintTextString,
+              errorText: _isValidate ? null : validationMessage,
+              counterText: '',
+              border: getBorder(),
+              enabledBorder:
+                  widget.enableBorder ? getBorder() : InputBorder.none,
+              focusedBorder:
+                  widget.enableBorder ? getFocusBorder() : InputBorder.none,
+              labelStyle: getTextStyle(),
+              prefixIcon: widget.prefixIcon ?? getPrefixIcon(),
+              suffixIcon: getSuffixIcon(),
+            ),
+            onChanged: checkValidation,
+            keyboardType: getInputType(),
+            obscureText: widget.inputType == EInputType.Password && !visibility,
+            maxLength: widget.inputType == EInputType.PaymentCard
+                ? 19
+                : widget.maxLength ?? getMaxLength(),
+            style: TextStyle(
+              color: widget.textColor ?? Colors.black,
+            ),
+            inputFormatters: [getFormatter()],
+          ),
+        ],
       ),
     );
   }

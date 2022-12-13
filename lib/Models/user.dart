@@ -1,12 +1,11 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class User {
   String username;
   String password;
-  String? fullname;
-  String? email;
-  String? phone;
+  String? fullname = "Hồ Văn Toàn";
+  String? email = "it.vantoan@gmail.com";
+  String? phone = "0336516906";
   String identityNumber = "";
 
   User(this.username, this.password, {this.fullname, this.email, this.phone}) {
@@ -37,4 +36,11 @@ class User {
   }
 
   String toJson() => json.encode(toUserMap());
+
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(map['username'] ?? "", map['password'] ?? "");
+  }
+  factory User.fromJson(String json) {
+    return User.fromMap(jsonDecode(json));
+  }
 }

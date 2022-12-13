@@ -43,6 +43,7 @@ dependencies:
   permission_handler: ^10.0.0
   basic_utils: ^5.4.2
   rsa_encrypt: ^2.0.0
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:
