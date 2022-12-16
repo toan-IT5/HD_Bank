@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:basic_utils/basic_utils.dart';
+import 'package:hd_bank/Models/transfer.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:async';
 import 'package:pointycastle/export.dart';
@@ -30,11 +32,12 @@ class BodyHelper {
   static Map<String, String> getRequest() {
     Map<String, String> params = {};
     params["requestId"] = newGuid();
-    params["requestTime"] = DateTime.now().toString();
+    params["requestTime"] =
+        DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
     return params;
   }
 
-  static Future<Map<String, dynamic>> getLoginParam(
+  static Future<Map<String, dynamic>> getLoginParams(
       User user, String key) async {
     Map<String, dynamic> params = {};
     params["request"] = getRequest().toString();
@@ -56,12 +59,28 @@ class BodyHelper {
     return params;
   }
 
-  static Future<Map<String, dynamic>> getRegisterParam(
+  static Future<Map<String, dynamic>> getRegisterParams(
       User user, String key) async {
     Map<String, dynamic> params = {};
     params["data"] = await getDataParam(user, key, true);
     params["request"] = getRequest().toString();
-    print(params);
+    return params;
+  }
+
+  static Future<Map<String, dynamic>> getBlanceParams(String accountNo) async {
+    Map<String, dynamic> params = {};
+    Map<String, String> data = {};
+    data["acctNo"] = "'$accountNo'";
+    params["data"] = data;
+    params["request"] = getRequest().toString();
+    return params;
+  }
+
+  static Future<Map<String, dynamic>> getTransferParams(
+      Transfer transfer) async {
+    Map<String, dynamic> params = {};
+    params["data"] = transfer.toJson();
+    params["request"] = getRequest().toString();
     return params;
   }
 }

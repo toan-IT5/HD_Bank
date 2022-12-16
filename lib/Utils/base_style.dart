@@ -26,6 +26,7 @@ class BaseColor {
   static const Color secondaryRed = Color(0xFFFBEAE9);
   static const Color green = Color(0xFF00C11F);
   static const Color secondaryGreen = Color(0xFFE9FCEC);
+  static const Color transfer = Color(0xFF4f7ae2);
 }
 
 class BaseTextStyle {
@@ -89,7 +90,6 @@ class BaseTextStyle {
 
   static TextStyle subtitle3({Color? color}) {
     return TextStyle(
-        decoration: TextDecoration.underline,
         fontFamily: "${BaseTextStyle.appFontFamily}-Medium",
         fontSize: 16,
         color: color ?? BaseColor.black,

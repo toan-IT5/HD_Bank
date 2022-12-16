@@ -2,6 +2,7 @@ import 'package:hd_bank/Models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefHelper {
+  /// User Manager
   static void saveUser(User user) {
     SharedPref.save(SharedPrefPath.user, user.toJson());
   }
@@ -14,8 +15,17 @@ class SharedPrefHelper {
     return null;
   }
 
+  static void removeUser() {
+    SharedPref.remove(SharedPrefPath.user);
+  }
+
+  ///Key Manager
   static void saveKey(User user) {
     SharedPref.save(SharedPrefPath.key, user.toJson());
+  }
+
+  static void removeKey() {
+    SharedPref.remove(SharedPrefPath.key);
   }
 
   static Future<String> getKey() async {
@@ -24,6 +34,28 @@ class SharedPrefHelper {
       return result;
     }
     return "";
+  }
+
+  ///AcountNo Manager
+  static void saveAccountNo(String accountNo) {
+    SharedPref.save(SharedPrefPath.accountNo, accountNo);
+  }
+
+  static Future<String> getAccountNo() async {
+    var result = await SharedPref.read(SharedPrefPath.accountNo);
+    if (result != null) {
+      return result;
+    }
+    return "";
+  }
+
+  static void removeAccountNo() {
+    SharedPref.remove(SharedPrefPath.accountNo);
+  }
+
+  static void removeKeyAndAccountNo() {
+    removeKey();
+    removeAccountNo();
   }
 }
 
@@ -62,4 +94,5 @@ class SharedPref {
 class SharedPrefPath {
   static const String key = "KEY";
   static const String user = "USER";
+  static const String accountNo = "ACCOUNT_NO";
 }

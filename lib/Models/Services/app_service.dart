@@ -44,7 +44,8 @@ class AppService extends BaseService {
           case "00":
             return jsonDecode(result.data);
           case "01":
-            throw SeverException(Message.messageCode01);
+            throw SeverException(
+                Message.messageCode01, result.response.responseCode);
           case "02":
             throw SeverException(Message.messageCode02);
           case "03":
@@ -56,7 +57,8 @@ class AppService extends BaseService {
           case "06":
             throw SeverException(Message.messageCode06);
           case "07":
-            throw SeverException(Message.messageCode07);
+            throw SeverException(
+                Message.messageCode07, result.response.responseCode);
           case "08":
             throw SeverException(Message.messageCode08);
           case "09":

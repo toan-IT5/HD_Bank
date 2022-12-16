@@ -2,13 +2,14 @@
 
 class AppException implements Exception {
   final _message;
+  final _code;
   final _prefix;
 
-  AppException([this._message, this._prefix]);
+  AppException([this._message, this._prefix, this._code]);
 
   @override
   String toString() {
-    return "$_prefix$_message";
+    return "$_code:$_prefix$_message";
   }
 }
 
@@ -30,5 +31,6 @@ class InvalidInputException extends AppException {
 }
 
 class SeverException extends AppException {
-  SeverException([String? message]) : super(message, "Lỗi: ");
+  SeverException([String? message, String? code])
+      : super(message, "Lỗi: ", code);
 }

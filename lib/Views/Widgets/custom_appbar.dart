@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hd_bank/Notifilers/app_notifiler.dart';
 import 'package:hd_bank/Utils/base_style.dart';
+import 'package:provider/provider.dart';
+import 'dart:math' as math;
 
-const double profileAppbarHeight = 72;
+const double profileAppbarHeight = 100;
 const double commonAppbarHeight = 56;
 
 class CommonAppbar extends StatelessWidget implements PreferredSize {
@@ -32,35 +35,13 @@ class CommonAppbar extends StatelessWidget implements PreferredSize {
           children: [
             Row(
               children: [
-                const Icon(Icons.reorder),
-                const SizedBox(width: 20),
+                canBack == true ? actionComponent(context) : Container(),
+                SizedBox(width: canBack == true ? 16 : 0),
                 Image.asset("assets/images/logo.png", fit: BoxFit.fill),
               ],
             ),
             Row(
               children: [
-                ClipRRect(
-                  clipBehavior: Clip.hardEdge,
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Container(
-                    margin: const EdgeInsets.all(4),
-                    width: 25,
-                    height: 25,
-                    child: Image.asset("assets/icons/qr_code.png",
-                        fit: BoxFit.scaleDown),
-                  ),
-                ),
-                ClipRRect(
-                  clipBehavior: Clip.hardEdge,
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Container(
-                    margin: const EdgeInsets.all(4),
-                    width: 25,
-                    height: 25,
-                    child: Image.asset("assets/icons/qr_code.png",
-                        fit: BoxFit.scaleDown),
-                  ),
-                ),
                 ClipRRect(
                   clipBehavior: Clip.hardEdge,
                   borderRadius: BorderRadius.circular(16.0),
@@ -89,7 +70,7 @@ class CommonAppbar extends StatelessWidget implements PreferredSize {
           color: Colors.transparent,
           alignment: Alignment.centerRight,
           child: Image.asset(
-            "assets/icons/action/icon_menu_blue.png",
+            "assets/icons/back.png",
             height: 20,
             fit: BoxFit.fitHeight,
           ),
@@ -118,10 +99,13 @@ class ProfileAppbar extends StatelessWidget implements PreferredSize {
 
   @override
   Widget build(BuildContext context) {
+    bool openBanlance =
+        Provider.of<AppNotifiler>(context, listen: true).isOpenBalance;
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-            color: Colors.white, boxShadow: [BaseBoxShadow.componentBoxShadow]),
+            color: BaseColor.red,
+            boxShadow: [BaseBoxShadow.componentBoxShadow]),
         child: SafeArea(
           child: Row(children: [
             getAvatar(avatar),
@@ -132,25 +116,32 @@ class ProfileAppbar extends StatelessWidget implements PreferredSize {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  Padding(
-                      padding: const EdgeInsets.only(top: 2, bottom: 4),
-                      child: RichText(
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          text: TextSpan(
-                              style:
-                                  BaseTextStyle.subtitle1(color: Colors.black),
-                              children: [
-                                const TextSpan(text: "Xin chào người dùng "),
-                                TextSpan(
-                                    text: name,
-                                    style:
-                                        const TextStyle(color: BaseColor.blue))
-                              ]))),
                   Text(
-                    "Chào mừng bạn đã quay trở lại với HD Bank",
-                    overflow: TextOverflow.ellipsis,
-                    style: BaseTextStyle.body2(color: BaseColor.black),
+                    name.toUpperCase(),
+                    style: BaseTextStyle.subtitle1(color: BaseColor.black),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      //TODO: call open the balance in my wallet.
+                      Provider.of<AppNotifiler>(context, listen: false)
+                          .disableContainer();
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          openBanlance ? "Ẩn số dư" : "Xem số dư ",
+                          style:
+                              BaseTextStyle.subtitle1(color: BaseColor.black),
+                        ),
+                        Transform.rotate(
+                          angle: openBanlance ? -math.pi : 0,
+                          child: const Icon(
+                            Icons.keyboard_arrow_down_sharp,
+                            size: 36,
+                          ),
+                        )
+                      ],
+                    ),
                   )
                 ]))
           ]),

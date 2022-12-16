@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hd_bank/Notifilers/app_notifiler.dart';
 import 'package:hd_bank/Views/Widgets/common_page.dart';
+import 'package:hd_bank/Views/Widgets/custom_button.dart';
 import 'package:hd_bank/Views/Widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -60,6 +61,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   textEditController: TextEditingController(text: "0336516906"),
                   inputType: EInputType.Default,
                   enableBorder: true),
+              const SizedBox(height: 16),
+              CustomButton.common(
+                  onTap: () {
+                    Provider.of<AppNotifiler>(context, listen: false).logout();
+                  },
+                  content: "Đăng xuất")
             ],
           ),
         ),

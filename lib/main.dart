@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:hd_bank/Notifilers/app_notifiler.dart';
 import 'package:hd_bank/Views/Screens/login_screen.dart';
 import 'package:hd_bank/Views/Screens/manager_screen.dart';
+import 'package:hd_bank/Views/Screens/transfer_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {

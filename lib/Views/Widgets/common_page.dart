@@ -13,6 +13,7 @@ class CommonPage extends StatelessWidget {
     this.actionPath,
     this.action,
     this.menuCallback,
+    this.color = Colors.white,
   }) : super(key: key);
 
   final Widget content;
@@ -23,6 +24,7 @@ class CommonPage extends StatelessWidget {
   final String? actionPath;
   final VoidCallback? action;
   final VoidCallback? menuCallback;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +38,14 @@ class CommonPage extends StatelessWidget {
         },
         child: Scaffold(
             appBar: customAppBar(context),
-            backgroundColor: Colors.white,
+            backgroundColor: color,
             body: SafeArea(child: content)));
   }
 
   PreferredSizeWidget? customAppBar(BuildContext context) {
     if (user != null) {
       return ProfileAppbar(
-        name: user!.username,
+        name: user!.fullname ?? "Hồ Văn Toàn",
         avatar: Image.asset("assets/icons/user_icon.jpg"),
       );
     }
