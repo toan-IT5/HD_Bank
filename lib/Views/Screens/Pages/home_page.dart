@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage>
         Provider.of<AppNotifiler>(context, listen: true).isOpenBalance;
     double balance = Provider.of<AppNotifiler>(context, listen: true).balance;
     Size size = MediaQuery.of(context).size;
-    double spaceSize = 16;
+    double spaceSize = 8;
     return CommonPage(
       color: BaseColor.red,
       content: SingleChildScrollView(

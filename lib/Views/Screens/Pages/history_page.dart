@@ -16,6 +16,8 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  DateTime from = DateTime(2021, 01, 29);
+  DateTime to = DateTime(2021, 01, 30);
   @override
   void initState() {
     super.initState();
@@ -28,8 +30,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime from = DateTime(2021, 01, 29);
-    DateTime to = DateTime(2021, 01, 30);
     return CommonPage(
       enableAppBar: true,
       color: Colors.grey.shade200,
@@ -60,7 +60,14 @@ class _HistoryPageState extends State<HistoryPage> {
                                       maxTime: DateTime.now(),
                                       onConfirm: (time) {
                                     from = time;
-                                    print(time);
+                                    DatePicker.showDatePicker(context,
+                                        showTitleActions: true,
+                                        minTime: DateTime(2020, 1, 1),
+                                        maxTime: DateTime.now(),
+                                        onConfirm: (date) {
+                                      to = date;
+                                      setState(() {});
+                                    }, currentTime: to, locale: LocaleType.vi);
                                   }, currentTime: from, locale: LocaleType.vi);
                                 },
                                 child: Container(
@@ -85,16 +92,7 @@ class _HistoryPageState extends State<HistoryPage> {
                               ),
                               const Icon(Icons.arrow_right),
                               GestureDetector(
-                                onTap: () {
-                                  DatePicker.showDatePicker(context,
-                                      showTitleActions: true,
-                                      minTime: DateTime(2020, 1, 1),
-                                      maxTime: DateTime.now(),
-                                      onConfirm: (date) {
-                                    to = date;
-                                    setState(() {});
-                                  }, currentTime: to, locale: LocaleType.vi);
-                                },
+                                onTap: () {},
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Colors.white,

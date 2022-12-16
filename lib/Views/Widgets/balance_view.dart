@@ -46,7 +46,7 @@ class BalanceView extends StatelessWidget {
                         ),
                         SizedBox(width: spaceSize),
                         Text(
-                          "HD-Bank Pay",
+                          "Số dư",
                           style: BaseTextStyle.body2(color: BaseColor.black),
                         ),
                       ],
