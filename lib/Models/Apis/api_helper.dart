@@ -18,4 +18,7 @@ class Enpoints {
   static const String changePassword = "/change_password";
   static const String balance = "/balance";
   static const String transfer = "/transfer";
+  static const String getPayment = "/getpayment";
+  static const String payment = "/payment";
+  static const String tranhis = "/tranhis";
 }

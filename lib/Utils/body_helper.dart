@@ -83,4 +83,39 @@ class BodyHelper {
     params["request"] = getRequest().toString();
     return params;
   }
+
+  static Future<Map<String, dynamic>> getPaymentParams(String sdId) async {
+    Map<String, dynamic> params = {};
+    Map<String, String> data = {};
+    data["sdId"] = "'$sdId'";
+    params["data"] = data;
+    params["request"] = getRequest().toString();
+    return params;
+  }
+
+  static Future<Map<String, dynamic>> getPayParams(
+      String sdId, String amount, String fromAcct) async {
+    Map<String, dynamic> params = {};
+    Map<String, String> data = {};
+    data["sdId"] = "'$sdId'";
+    data["amount"] = amount;
+    data["description"] = "";
+    data["fromAcct"] = "'$fromAcct'";
+
+    params["data"] = data;
+    params["request"] = getRequest().toString();
+    return params;
+  }
+
+  static Future<Map<String, dynamic>> getHistoryParams(
+      String fromDate, String toDate, String accountNo) async {
+    Map<String, dynamic> params = {};
+    Map<String, String> data = {};
+    data["acctNo"] = "'$accountNo'";
+    data["fromDate"] = "'$fromDate'";
+    data["toDate"] = "'$toDate'";
+    params["data"] = data;
+    params["request"] = getRequest().toString();
+    return params;
+  }
 }

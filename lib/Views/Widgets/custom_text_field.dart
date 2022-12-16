@@ -18,6 +18,9 @@ class CustomTextField extends StatefulWidget {
       this.prefixIcon,
       this.lable,
       this.textColor,
+      this.textInputAction,
+      this.autoFocus = false,
+      this.onSubmit,
       this.errorMessage})
       : super(key: key);
 
@@ -32,6 +35,9 @@ class CustomTextField extends StatefulWidget {
   final Color? textColor;
   final String? errorMessage;
   final String? lable;
+  final bool autoFocus;
+  final Function? onSubmit;
+  final TextInputAction? textInputAction;
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
@@ -59,21 +65,40 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 )
               : Container(),
           TextFormField(
+            autofocus: widget.autoFocus,
             controller: widget.textEditController,
             decoration: InputDecoration(
               hintText: widget.hintTextString,
               errorText: _isValidate ? null : validationMessage,
               counterText: '',
-              border: getBorder(),
-              enabledBorder:
-                  widget.enableBorder ? getBorder() : InputBorder.none,
-              focusedBorder:
-                  widget.enableBorder ? getFocusBorder() : InputBorder.none,
+              border:
+                  EInputType.Transfer == widget.inputType ? null : getBorder(),
+              enabledBorder: EInputType.Transfer == widget.inputType
+                  ? null
+                  : widget.enableBorder
+                      ? getBorder()
+                      : InputBorder.none,
+              focusedBorder: EInputType.Transfer == widget.inputType
+                  ? null
+                  : widget.enableBorder
+                      ? getFocusBorder()
+                      : InputBorder.none,
               labelStyle: getTextStyle(),
-              prefixIcon: widget.prefixIcon ?? getPrefixIcon(),
-              suffixIcon: getSuffixIcon(),
+              prefixIcon: EInputType.Transfer == widget.inputType
+                  ? null
+                  : widget.prefixIcon ?? getPrefixIcon(),
+              suffixIcon: EInputType.Transfer == widget.inputType
+                  ? null
+                  : getSuffixIcon(),
             ),
+            onFieldSubmitted: (v) {
+              FocusScope.of(context).unfocus();
+              checkValidation(v);
+              if (widget.onSubmit != null) widget.onSubmit!();
+            },
             onChanged: checkValidation,
+            onEditingComplete: () =>
+                checkValidation(widget.textEditController.text),
             keyboardType: getInputType(),
             obscureText: widget.inputType == EInputType.Password && !visibility,
             maxLength: widget.inputType == EInputType.PaymentCard
@@ -82,6 +107,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             style: TextStyle(
               color: widget.textColor ?? Colors.black,
             ),
+            textInputAction: widget.textInputAction,
             inputFormatters: [getFormatter()],
           ),
         ],
@@ -157,6 +183,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
       //payment card validation
       _isValidate = textFieldValue.length == 19;
       validationMessage = widget.errorMessage ?? 'Card number is not correct';
+    } else if (widget.inputType == EInputType.Transfer) {
+      //payment card validation
+      _isValidate = textFieldValue.isNotEmpty;
+      validationMessage = widget.errorMessage ?? 'Dữ liệu không được để trống';
     }
     oldTextSize = textFieldValue.length;
     //change value in state
@@ -176,6 +206,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
         return TextInputType.number;
 
       case EInputType.PaymentCard:
+        return TextInputType.number;
+
+      case EInputType.Transfer:
         return TextInputType.number;
 
       default:
@@ -200,6 +233,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
       case EInputType.PaymentCard:
         return 19;
+
+      case EInputType.Transfer:
+        return 36;
 
       default:
         return 36;
@@ -267,4 +303,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
 }
 
 //input types
-enum EInputType { Default, Email, Number, Password, PaymentCard }
+enum EInputType {
+  None,
+  Default,
+  Email,
+  Number,
+  Password,
+  PaymentCard,
+  Transfer
+}

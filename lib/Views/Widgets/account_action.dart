@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hd_bank/Utils/base_style.dart';
+import 'package:hd_bank/Views/Screens/transfer_screen.dart';
 
 class AccountAction extends StatelessWidget {
   const AccountAction({
@@ -17,7 +18,12 @@ class AccountAction extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TransferScreen()),
+              );
+            },
             child: Container(
               width: size.width / 2 - 24,
               decoration: BoxDecoration(

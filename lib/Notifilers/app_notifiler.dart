@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:hd_bank/Models/Apis/api_response.dart';
 import 'package:hd_bank/Models/Services/Repositorys/app_responsitory.dart';
-import 'package:hd_bank/Models/feature.dart';
+import 'package:hd_bank/Models/fee.dart';
+import 'package:hd_bank/Models/transfer.dart';
+import 'package:hd_bank/Models/transfer_history.dart';
 import 'package:hd_bank/Models/user.dart';
-import 'package:hd_bank/Utils/base_style.dart';
+import 'package:hd_bank/Utils/fake_data.dart';
 import 'package:hd_bank/Utils/shared_preferences_helper.dart';
 
 class AppNotifiler with ChangeNotifier {
@@ -14,7 +14,7 @@ class AppNotifiler with ChangeNotifier {
   String _key = "";
   User? _user;
   bool _authorize = false;
-  int _page = 0;
+  int _page = 1;
   String _accountNo = "";
   bool _isAuthorized = false;
   bool _isOpenBalance = false;
@@ -47,56 +47,6 @@ class AppNotifiler with ChangeNotifier {
     }
   }
 
-  List<Feature> getFuture() {
-    List<Feature> features = List.empty(growable: true);
-    features.add(
-      Feature(
-        name: "Đóng học phí",
-        image: "assets/icons/university.png",
-        padding: 10,
-        bachgroundColor: BaseColor.secondaryOrange,
-      ),
-    );
-    features.add(
-      Feature(
-        name: "Tiền nước",
-        image: "assets/icons/water_money.png",
-        bachgroundColor: BaseColor.transfer,
-      ),
-    );
-    features.add(
-      Feature(
-        name: "Vé số",
-        image: "assets/icons/lottery.png",
-        bachgroundColor: BaseColor.orange,
-        padding: 10,
-      ),
-    );
-    features.add(
-      Feature(
-        name: "Tiền điện",
-        image: "assets/icons/hydroelectric.png",
-        bachgroundColor: Colors.yellow,
-        padding: 8,
-      ),
-    );
-    features.add(
-      Feature(
-        name: "Internet",
-        image: "assets/icons/bill.png",
-        bachgroundColor: const Color(0xFF87CEFA),
-      ),
-    );
-    features.add(
-      Feature(
-        name: "Xem tất cả",
-        image: "assets/icons/view_more.png",
-        padding: 0,
-      ),
-    );
-    return features;
-  }
-
   Future<void> getKey() async {
     _apiResponse = ApiResponse.loading('Đang lấy API KEY');
     notifyListeners();
@@ -125,12 +75,14 @@ class AppNotifiler with ChangeNotifier {
         _user = user;
         _authorize = true;
         _accountNo = accountNo;
+        _isOpenBalance = false;
         SharedPrefHelper.saveAccountNo(accountNo);
         if (kDebugMode) {
           print("Login Success: $accountNo");
         }
         _apiResponse = ApiResponse.completed(_accountNo);
         SharedPrefHelper.saveUser(user);
+        notifyListeners();
       }
       _apiResponse = ApiResponse.completed("Đăng nhập không thành công.");
     } catch (e) {
@@ -139,7 +91,6 @@ class AppNotifiler with ChangeNotifier {
         print(e.toString());
       }
     }
-    notifyListeners();
   }
 
   Future<void> register(User user) async {
@@ -174,12 +125,17 @@ class AppNotifiler with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> transfer(String toAcct) async {
+  Future<void> transfer(
+      String toAcct, String amount, String description) async {
     _apiResponse = ApiResponse.loading('Đang chuyển khoản');
     notifyListeners();
     try {
-      var balance = await AppReponsitory().balance(_accountNo);
-      _balance = double.parse(balance);
+      await AppReponsitory().transfer(Transfer(
+        amount: amount,
+        descrition: description,
+        fromAcct: _accountNo,
+        toAcct: toAcct,
+      ));
       _apiResponse = ApiResponse.completed(balance);
     } catch (e) {
       _apiResponse = ApiResponse.error(e.toString());
@@ -189,6 +145,50 @@ class AppNotifiler with ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  Future<void> getFees(String sdId) async {
+    _apiResponse = ApiResponse.loading("");
+    notifyListeners();
+    try {
+      List<Fee> list = await AppReponsitory().fee(sdId);
+      if (list.isEmpty) list = Data.getFees();
+      _apiResponse = ApiResponse.completed(list);
+    } catch (e) {
+      _apiResponse = ApiResponse.error(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> payment(String sdId, String amount) async {
+    _apiResponse = ApiResponse.loading("");
+    notifyListeners();
+    try {
+      await AppReponsitory().payment(sdId, amount, _accountNo);
+      await getFees(sdId);
+    } catch (e) {
+      _apiResponse = ApiResponse.error(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<List<TransferHistory>> history(String fromDate, String toDate) async {
+    try {
+      List<TransferHistory> historys =
+          await AppReponsitory().history(fromDate, toDate, _accountNo);
+      return historys;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    return List<TransferHistory>.empty(growable: true);
   }
 
   void setKey(String key) {
@@ -206,6 +206,11 @@ class AppNotifiler with ChangeNotifier {
     notifyListeners();
   }
 
+  void resetResponse() {
+    _apiResponse = ApiResponse.initial("Không có dữ liệu");
+    notifyListeners();
+  }
+
   void disableContainer() {
     _isOpenBalance = !_isOpenBalance;
     if (_isOpenBalance) {
@@ -215,8 +220,8 @@ class AppNotifiler with ChangeNotifier {
   }
 
   void logout() {
-    SharedPrefHelper.removeKeyAndAccountNo();
-    _key = "";
+    SharedPrefHelper.removeAccountNo();
+    _page = 0;
     _accountNo = "";
     _authorize = false;
     notifyListeners();

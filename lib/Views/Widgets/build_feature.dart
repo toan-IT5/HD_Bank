@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hd_bank/Models/feature.dart';
-import 'package:hd_bank/Notifilers/app_notifiler.dart';
 import 'package:hd_bank/Utils/base_style.dart';
-import 'package:provider/provider.dart';
+import 'package:hd_bank/Utils/fake_data.dart';
+import 'package:hd_bank/Views/Screens/payment.dart';
 
 class BuildFeatures extends StatelessWidget {
   const BuildFeatures({
@@ -11,7 +11,7 @@ class BuildFeatures extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Feature> features = Provider.of<AppNotifiler>(context).getFuture();
+    List<Feature> features = Data.getFuture();
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -24,8 +24,8 @@ class BuildFeatures extends StatelessWidget {
               crossAxisCount: 3,
               mainAxisSpacing: 2,
               padding: const EdgeInsets.all(16),
-              children: List.generate(
-                  features.length, (index) => buildFeature(features[index])),
+              children: List.generate(features.length,
+                  (index) => buildFeature(features[index], context)),
             ),
           )
         ],
@@ -33,9 +33,12 @@ class BuildFeatures extends StatelessWidget {
     );
   }
 
-  Widget buildFeature(Feature feature) {
+  Widget buildFeature(Feature feature, BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        print("Nhấn");
+        onClick(feature.type, context);
+      },
       child: Column(
         children: [
           CircleAvatar(
@@ -54,5 +57,19 @@ class BuildFeatures extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void onClick(EActionType type, BuildContext context) {
+    switch (type) {
+      case EActionType.Tuition:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Payment()),
+        );
+
+        break;
+      case EActionType.Default:
+        break;
+    }
   }
 }
